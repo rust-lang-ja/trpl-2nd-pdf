@@ -16,5 +16,5 @@ if [[ "${TRAVIS_OS_NAME}" == "linux" && "${TRAVIS_BRANCH}" == "master" && "${TRA
   git stash pop
   git add book.pdf
   git commit -a -m "auto commit on travis $TRAVIS_JOB_NUMBER $TRAVIS_COMMIT"
-  git push git@github.com:y-yu/trpl-2nd-pdf.git gh-pages:gh-pages
+  git push git@github.com:rust-lang-ja/book-ja-pdf.git gh-pages:gh-pages
 fi

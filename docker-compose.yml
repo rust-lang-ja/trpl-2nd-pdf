@@ -1,11 +1,11 @@
 version: '3.2'
 services:
   trpl-pdf-compile:
-    image: yyupw/trpl-2nd-pdf:latest
+    image: yyupw/book-ja-pdf:latest
     build:
       context: .
       dockerfile: ./docker/Dockerfile
       cache_from:
-        - yyupw/trpl-2nd-pdf:latest
+        - yyupw/book-ja-pdf:latest
     volumes:
       - .:/workdir

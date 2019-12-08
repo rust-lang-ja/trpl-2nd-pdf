@@ -8,7 +8,7 @@ if [[ -d "./book" ]]; then
   git pull origin master
   cd ..
 else
-  git clone https://github.com/hazama-yuinyan/book
+  git clone https://github.com/rust-lang-ja/book-ja book
 fi
 
 cp -r ./book/second-edition/src/img ./
