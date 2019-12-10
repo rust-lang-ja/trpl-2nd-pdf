@@ -1,25 +1,19 @@
-FROM frolvlad/alpine-glibc:alpine-3.10
+FROM pandoc/core:2.7.3
 
 MAINTAINER yyu <yyu [at] mental.poker>
 
 ENV TEXLIVE_DEPS \
     xz \
     tar \
-    fontconfig-dev
-    
-ENV TEXLIVE_PATH /usr/local/texlive
-
-ENV PANDOC_DEPS \
-    alpine-sdk \
-    coreutils \
-    ghc \
-    gmp \
-    libffi \
-    linux-headers \
-    musl-dev \
+    fontconfig-dev \
     zlib-dev \
-    cabal \
-    tar
+    gnupg \
+    musl-dev \
+    alpine-sdk \
+    pkgconfig \
+    gmp-dev
+
+ENV TEXLIVE_PATH /usr/local/texlive
 
 ENV FONT_DEPS \
     unzip \
@@ -35,11 +29,10 @@ ENV PERSISTENT_DEPS \
     ghostscript \
     inkscape \
     bash \
-    git
+    git \
+    ca-certificates
 
-ENV PANDOC_VERSION 2.7.3
-ENV PANDOC_DOWNLOAD_URL https://hackage.haskell.org/package/pandoc-$PANDOC_VERSION/pandoc-$PANDOC_VERSION.tar.gz
-ENV PANDOC_ROOT /usr/local/pandoc
+ENV PANDOC_ROOT /usr/bin/pandoc
 
 ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$PANDOC_ROOT/bin:$PATH
 
@@ -89,25 +82,17 @@ RUN mkdir -p $FONT_PATH && \
     fc-cache -f -v && \
     apk del .font-deps 
 
-# Install Pandoc
-# See https://github.com/skyzyx/alpine-pandoc/blob/master/Dockerfile
-RUN apk add --no-cache --virtual .pandoc-deps $PANDOC_DEPS  && \
-    apk add --no-cache --virtual .cabal cabal -X http://dl-cdn.alpinelinux.org/alpine/edge/community && \
-    wget -qO- "$PANDOC_DOWNLOAD_URL" | tar -xzf - && \
-      ( cd pandoc-$PANDOC_VERSION && cabal update && cabal install --only-dependencies && \
-      cabal configure --prefix=$PANDOC_ROOT && \
-      cabal build && \
-      cabal copy && \
-      cd .. ) && \
-    rm -Rf pandoc-$PANDOC_VERSION/ && \
-    rm -Rf /root/.cabal/ /root/.ghc/ && \
-    apk del .pandoc-deps .cabal
-
 # Install Pandocfilter
 COPY requirements.txt ./
 RUN pip3 install --upgrade pip && \
     pip3 install -r requirements.txt && \
     rm requirements.txt
+
+
+# Install glibc
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.30-r0/glibc-2.30-r0.apk && \
+    apk add glibc-2.30-r0.apk
 
 # Install TeXLive
 RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
@@ -124,7 +109,8 @@ RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
       -profile /tmp/install-tl-unx/texlive.profile && \
     tlmgr install latexmk collection-luatex collection-langjapanese \
       collection-fontsrecommended type1cm mdframed needspace fncychap \
-      everyhook svn-prov enumitem background everypage && \
+      everyhook svn-prov enumitem background everypage letltxmacro \
+      zref && \
     rm -fr /tmp/install-tl-unx && \
     apk del .texlive-deps
 
