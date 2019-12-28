@@ -1,6 +1,5 @@
 dist: bionic
 language: generic
-sudo: required
 env:
   global:
     - IMAGE_NAME=yyupw/book-ja-pdf
