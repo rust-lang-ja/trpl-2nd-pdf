@@ -1,4 +1,4 @@
-FROM pandoc/core:2.7.3
+FROM pandoc/core:2.9.1
 
 MAINTAINER yyu <yyu [at] mental.poker>
 
@@ -32,9 +32,7 @@ ENV PERSISTENT_DEPS \
     git \
     ca-certificates
 
-ENV PANDOC_ROOT /usr/bin/pandoc
-
-ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$PANDOC_ROOT/bin:$PATH
+ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$TEXLIVE_PATH/bin/x86_64-linuxmusl:$PATH
 
 RUN apk upgrade --update
 
