@@ -1,9 +1,9 @@
-The Rust Programming Language: 2nd Edition PDF (Japanese)
+The Rust Programming Language: 2018 Edition PDF (Japanese)
 =================================
 
 [![Build Status](https://travis-ci.org/rust-lang-ja/book-ja-pdf.svg?branch=master)](https://travis-ci.org/rust-lang-ja/book-ja-pdf)
 
-[The Rust Programming Language: 2nd Edition（日本語版）](https://github.com/rust-lang-ja/book-ja)のPDF版のリポジトリです。
+[The Rust Programming Language: 2018 Edition（日本語版）](https://github.com/rust-lang-ja/book-ja)のPDF版のリポジトリです。
 
 ## 成果物
 
