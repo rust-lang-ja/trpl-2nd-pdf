@@ -1,6 +1,6 @@
-FROM pandoc/core:2.9.1
+FROM pandoc/core:2.10
 
-MAINTAINER yyu <yyu [at] mental.poker>
+LABEL maintainer="YOSHIMRUA Hikaru <yyu [at] mental.poker>"
 
 ENV TEXLIVE_DEPS \
     xz \
@@ -23,6 +23,9 @@ ENV FONT_PATH /usr/share/fonts/
 
 ENV PERSISTENT_DEPS \
     python3 \
+    py-pip \
+    rust \
+    cargo \
     wget \
     make \
     perl \
@@ -32,7 +35,7 @@ ENV PERSISTENT_DEPS \
     git \
     ca-certificates
 
-ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$TEXLIVE_PATH/bin/x86_64-linuxmusl:$PATH
+ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$TEXLIVE_PATH/bin/x86_64-linuxmusl:/root/.cargo/bin:$PATH
 
 RUN apk upgrade --update
 
@@ -82,9 +85,12 @@ RUN mkdir -p $FONT_PATH && \
 
 # Install Pandocfilter
 COPY requirements.txt ./
-RUN pip3 install --upgrade pip && \
-    pip3 install -r requirements.txt && \
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt && \
     rm requirements.txt
+
+# Install mdbook
+RUN cargo install mdbook --vers 0.3.6
 
 # Install TeXLive
 RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
@@ -103,6 +109,7 @@ RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
       collection-fontsrecommended type1cm mdframed needspace fncychap \
       everyhook svn-prov enumitem background everypage letltxmacro \
       zref && \
+    luaotfload-tool -v -vvv -u && \
     rm -fr /tmp/install-tl-unx && \
     apk del .texlive-deps
 

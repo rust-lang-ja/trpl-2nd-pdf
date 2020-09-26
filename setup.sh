@@ -1,38 +1,52 @@
 #!/bin/bash
 
-set -e
+set -ex
 
-if [[ -d "./book" ]]; then
-  cd book
-  git checkout master
-  git pull origin master
-  cd ..
+# Clone Markdown source
+if [[ -d "./book-ja" ]]; then
+  cd book-ja
+  git checkout master-ja
+  git pull origin master-ja
 else
-  git clone https://github.com/rust-lang-ja/book-ja book
+  git clone https://github.com/rust-lang-ja/book-ja
+  cd book-ja  
+  git fetch
+  git checkout master-ja
 fi
 
-cp -r ./book/second-edition/src/img ./
+# Build completely markdown files
+echo $'\n[output.markdown]' >> book.toml
+cat book.toml
+/root/.cargo/bin/mdbook build
+
+# Back to the root directory
+cd ..
+
+# Download online images
+cp -r ./book-ja/src/img ./
 for f in ./img/*.svg
 do
   if [[ $f =~ \./img/(.*)\.svg ]]; then
     SVG=`pwd`/img/${BASH_REMATCH[1]}.svg
     PDF=`pwd`/${BASH_REMATCH[1]}.pdf
     PDFTEX=`pwd`/${BASH_REMATCH[1]}.pdf_tex
-    inkscape -z -D --file="$SVG" --export-pdf="$PDF" --export-latex
+    inkscape -D "$SVG" --export-filename="$PDF" --export-latex
     PAGES=$(egrep -a '/Type /Page\b' "$PDF" | wc -l | tr -d ' ')
     python3 ./python/fix_pdf_tex.py "$PAGES" < "$PDFTEX" > "$PDFTEX.tmp"
     mv "$PDFTEX.tmp" "$PDFTEX"
   fi
 done
 
+# Make working directory
 if [[ ! -d "./target" ]]; then
   mkdir target
 fi
 
-for f in book/second-edition/src/*.md; do
+# Copy markdown files to the working directory
+for f in ./book-ja/docs/markdown/*.md; do
   cp "$f" target/
-  echo "$f"
 done
+cp ./book-ja/src/SUMMARY.md ./target/
 
 python3 python/fix_table.py < target/appendix-02-operators.md > target/tmp.md
 mv target/tmp.md target/appendix-02-operators.md

@@ -10,10 +10,16 @@ if __name__ == "__main__":
     front_matter_sections = []
     main_matter_sections = []
     back_matter_sections = []
+    isComment = False
 
     for line in sys.stdin:
+        if re.search(r'<!--', line):
+            isComment = True
+        elif isComment and re.search(r'-->', line):
+            isComment = False
+    
         r = re.search(r'\[.*\]\((.*)\.md\)$', line)
-        if not r:
+        if isComment or not r:
             continue
         src = r.group(1)
         if src == 'foreword' or src.startswith('ch00'):
