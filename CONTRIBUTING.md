@@ -1,4 +1,4 @@
-Contributing to TRPL 2nd PDF
+Contributing to TRPL PDF
 ================================
 
 ## コンパイル
