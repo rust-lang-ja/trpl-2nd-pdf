@@ -53,11 +53,7 @@ mv target/tmp.md target/appendix-02-operators.md
 
 for f in target/*.md; do
   BASE=$(basename $f .md)
-  if [[ $BASE =~ appendix-(06|07)- ]]; then
-    FILTERS="--filter ./python/fix_headers.py --filter ./python/filter.py"
-  else
-    FILTERS="--filter ./python/filter.py"
-  fi
+  FILTERS="--filter ./python/filter.py"
   if [[ $BASE =~ appendix-02- ]]; then
     COLUMNS="--columns=10"
   fi

@@ -22,13 +22,17 @@ if __name__ == "__main__":
         if isComment or not r:
             continue
         src = r.group(1)
-        if src == 'foreword' or src.startswith('ch00'):
+        if src.startswith('ch00'):
             front_matter_sections.append(src)
         elif src.startswith('appendix'):
             back_matter_sections.append(src)
-        else:
+        elif src.startswith('ch'):
             main_matter_sections.append(src)
 
+    # title-pageとforwordは決めうちで対応
+    front_matter_sections.insert(0, 'foreword')
+    front_matter_sections.insert(0, 'title-page')
+    
     print('\\frontmatter')
     print('\\setcounter{secnumdepth}{0}')
     print(input_sections(front_matter_sections))
