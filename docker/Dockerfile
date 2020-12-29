@@ -1,4 +1,4 @@
-FROM pandoc/core:2.10
+FROM pandoc/core:2.11
 
 LABEL maintainer="YOSHIMRUA Hikaru <yyu [at] mental.poker>"
 
@@ -22,7 +22,6 @@ ENV FONT_DEPS \
 ENV FONT_PATH /usr/share/fonts/
 
 ENV PERSISTENT_DEPS \
-    python3 \
     py-pip \
     rust \
     cargo \
@@ -90,7 +89,7 @@ RUN pip install --upgrade pip && \
     rm requirements.txt
 
 # Install mdbook
-RUN cargo install mdbook --vers 0.3.6
+RUN cargo install mdbook --vers 0.3.7
 
 # Install TeXLive
 RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
