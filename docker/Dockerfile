@@ -1,4 +1,4 @@
-FROM pandoc/core:2.11
+FROM pandoc/core:2.13
 
 LABEL maintainer="YOSHIMRUA Hikaru <yyu [at] mental.poker>"
 
