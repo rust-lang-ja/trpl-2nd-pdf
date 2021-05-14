@@ -89,8 +89,7 @@ RUN pip install --upgrade pip && \
     rm requirements.txt
 
 # Install mdBook
-RUN cargo install mdbook --git https://github.com/rust-lang-ja/mdBook \
-    --branch summary-with-html-comments
+RUN cargo install mdbook --vers 0.4.8
 
 # Install TeXLive
 RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \

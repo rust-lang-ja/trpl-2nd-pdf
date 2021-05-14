@@ -87,6 +87,9 @@ def mkBeginSup():
 def mkEndSup():
     return RawInline('latex', '}')
 
+def mkIncludegraphics(src):
+    return RawInline('latex', "\\includegraphics{img/" + src.split('.')[0] + "}")
+
 import json
 
 def filter(key, value, fmt, meta):
