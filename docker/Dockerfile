@@ -1,4 +1,4 @@
-FROM pandoc/core:2.11
+FROM pandoc/core:2.16
 
 LABEL maintainer="YOSHIMRUA Hikaru <yyu [at] mental.poker>"
 
@@ -25,7 +25,7 @@ ENV PERSISTENT_DEPS \
     py-pip \
     rust \
     cargo \
-    wget \
+    curl \
     make \
     perl \
     ghostscript \
@@ -45,40 +45,40 @@ RUN apk add --no-cache --virtual .persistent-deps $PERSISTENT_DEPS
 RUN mkdir -p $FONT_PATH && \
     apk add --no-cache --virtual .font-deps $FONT_DEPS && \
     # Noto Serif
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSerif-unhinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoSerif-unhinted.zip && \
       unzip -d NotoSerif-unhinted NotoSerif-unhinted.zip && \
       cp NotoSerif-unhinted/*.ttf $FONT_PATH && \
       rm -rf NotoSerif-unhinted.zip NotoSerif-unhinted && \
     # Noto Naskh Arabic
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoNaskhArabic-unhinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoNaskhArabic-unhinted.zip && \
       unzip -d NotoNaskhArabic-unhinted NotoNaskhArabic-unhinted.zip && \
       cp NotoNaskhArabic-unhinted/*.ttf $FONT_PATH && \
       rm -rf NotoNaskhArabic-unhinted.zip NotoNaskhArabic-unhinted && \
     # Noto Serif CJK JP
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSerifCJKjp-hinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoSerifCJKjp-hinted.zip && \
       unzip -d NotoSerifCJKjp-hinted NotoSerifCJKjp-hinted.zip && \
       cp NotoSerifCJKjp-hinted/*.otf $FONT_PATH && \
       rm -rf NotoSerifCJKjp-hinted.zip NotoSerifCJKjp-hinted && \
     # Noto Sans Devanagari
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansDevanagari-unhinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoSansDevanagari-unhinted.zip && \
       unzip -d NotoSansDevanagari-unhinted NotoSansDevanagari-unhinted.zip && \
       cp NotoSansDevanagari-unhinted/*.ttf $FONT_PATH && \
       rm -rf NotoSansDevanagari-unhinted.zip NotoSansDevanagari-unhinted && \
     # Noto Emoji
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoEmoji-unhinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoEmoji-unhinted.zip && \
       unzip -d NotoEmoji-unhinted NotoEmoji-unhinted.zip && \
       cp NotoEmoji-unhinted/*.ttf $FONT_PATH && \
       rm -rf NotoEmoji-unhinted.zip  NotoEmoji-unhinted && \
     # Noto Sans Hebrew
-    wget https://noto-website-2.storage.googleapis.com/pkgs/NotoSansHebrew-unhinted.zip && \
+    curl -sSfLO https://noto-website-2.storage.googleapis.com/pkgs/NotoSansHebrew-unhinted.zip && \
       unzip -d NotoSansHebrew-unhinted NotoSansHebrew-unhinted.zip && \
       cp NotoSansHebrew-unhinted/*.ttf $FONT_PATH && \
       rm -rf NotoSansHebrew-unhinted.zip NotoSansHebrew-unhinted && \
     # Source Code Pro
-    wget https://github.com/adobe-fonts/source-code-pro/archive/2.030R-ro/1.050R-it.zip && \
-      unzip 1.050R-it.zip && \
-      cp source-code-pro-2.030R-ro-1.050R-it/OTF/*.otf $FONT_PATH && \
-      rm -rf 1.050R-it.zip source-code-pro-2.030R-ro-1.050R-it && \
+    curl -sSfLO "https://github.com/adobe-fonts/source-code-pro/releases/download/2.038R-ro%2F1.058R-it%2F1.018R-VAR/OTF-source-code-pro-2.038R-ro-1.058R-it.zip" && \
+      unzip OTF-source-code-pro-2.038R-ro-1.058R-it.zip -d source-code-pro && \
+      cp source-code-pro/*.otf $FONT_PATH && \
+      rm -rf OTF-source-code-pro-2.038R-ro-1.058R-it.zip source-code-pro && \
     fc-cache -f -v && \
     apk del .font-deps 
 
@@ -88,13 +88,17 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt && \
     rm requirements.txt
 
+# Update Rust and cargo
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+    rustup update
+
 # Install mdBook
-RUN cargo install mdbook --vers 0.4.8
+RUN cargo install mdbook
 
 # Install TeXLive
 RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
     mkdir /tmp/install-tl-unx && \
-    wget -qO- http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | \
+    curl -sSfL http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz | \
       tar -xz -C /tmp/install-tl-unx --strip-components=1 && \
     printf "%s\n" \
       "TEXDIR $TEXLIVE_PATH" \
@@ -106,8 +110,7 @@ RUN apk add --no-cache --virtual .texlive-deps $TEXLIVE_DEPS && \
       -profile /tmp/install-tl-unx/texlive.profile && \
     tlmgr install latexmk collection-luatex collection-langjapanese \
       collection-fontsrecommended type1cm mdframed needspace fncychap \
-      everyhook svn-prov enumitem background everypage letltxmacro \
-      zref && \
+      everyhook svn-prov enumitem background everypage zref && \
     luaotfload-tool -v -vvv -u && \
     rm -fr /tmp/install-tl-unx && \
     apk del .texlive-deps
