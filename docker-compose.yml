@@ -1,11 +1,11 @@
 version: '3.2'
 services:
   trpl-pdf-compile:
-    image: yyupw/book-ja-pdf:latest
+    image: ghcr.io/rust-lang-ja/book-ja-pdf:latest
     build:
       context: .
       dockerfile: ./docker/Dockerfile
       cache_from:
-        - yyupw/book-ja-pdf:latest
+        - ghcr.io/rust-lang-ja/book-ja-pdf:latest
     volumes:
       - .:/workdir
