@@ -30,7 +30,7 @@ do
     SVG=`pwd`/img/${BASH_REMATCH[1]}.svg
     PDF=`pwd`/${BASH_REMATCH[1]}.pdf
     PDFTEX=`pwd`/${BASH_REMATCH[1]}.pdf_tex
-    inkscape -D "$SVG" --export-filename="$PDF" --export-latex
+    inkscape --without-gui -D "$SVG" --export-filename="$PDF" --export-latex
     PAGES=$(egrep -a '/Type /Page\b' "$PDF" | wc -l | tr -d ' ')
     python3 ./python/fix_pdf_tex.py "$PAGES" < "$PDFTEX" > "$PDFTEX.tmp"
     mv "$PDFTEX.tmp" "$PDFTEX"
