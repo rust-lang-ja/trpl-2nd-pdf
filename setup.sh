@@ -56,7 +56,7 @@ for f in target/*.md; do
   if [[ $BASE =~ appendix-02- ]]; then
     COLUMNS="--columns=10"
   fi
-  FILENAME="$BASE" pandoc -o "./target/$BASE.tex" -f markdown_github+footnotes+header_attributes-hard_line_breaks \
+  FILENAME="$BASE" pandoc -o "./target/$BASE.tex" -f gfm+footnotes+header_attributes-hard_line_breaks \
       --pdf-engine=lualatex --top-level-division=chapter $COLUMNS --listings $FILTERS $f
 done
 
