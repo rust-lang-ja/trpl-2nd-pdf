@@ -43,10 +43,9 @@ if [[ ! -d "./target" ]]; then
 fi
 
 # Copy markdown files to the working directory
-for f in ./book-ja/docs/markdown/*.md; do
+for f in ./book-ja/src/*.md; do
   cp "$f" target/
 done
-cp ./book-ja/src/SUMMARY.md ./target/
 
 python3 python/fix_table.py < target/appendix-02-operators.md > target/tmp.md
 mv target/tmp.md target/appendix-02-operators.md
