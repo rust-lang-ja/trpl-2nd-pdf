@@ -25,6 +25,7 @@ cd ..
 
 # Download online images
 cp -r ./book-ja/src/img ./
+mv ./img/ferris/* ./img
 for f in ./img/*.svg
 do
   if [[ $f =~ \./img/(.*)\.svg ]]; then
@@ -63,3 +64,6 @@ for f in target/*.md; do
 done
 
 python3 ./python/body.py < ./target/SUMMARY.md > body.tex
+
+python3 ./python/fix_incsvg.py < target/ch00-00-introduction.tex > target/tmp.tex
+mv target/tmp.tex target/ch00-00-introduction.tex
