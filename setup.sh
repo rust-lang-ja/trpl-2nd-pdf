@@ -5,6 +5,7 @@ set -ex
 # Clone Markdown source
 if [[ -d "./book-ja" ]]; then
   cd book-ja
+  git restore book.toml
   git checkout master-ja
   git pull origin master-ja
 else
