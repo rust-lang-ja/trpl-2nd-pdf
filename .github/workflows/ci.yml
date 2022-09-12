@@ -31,15 +31,11 @@ jobs:
       with:
         file: ./docker/Dockerfile
         platforms: linux/amd64
-        push: true
+        push: ${{ github.ref == 'refs/heads/master' }}
         tags: ghcr.io/rust-lang-ja/book-ja-pdf:latest
 
     - name: PDF build
       run: docker-compose up --abort-on-container-exit
-      
-    - name: Push Docker image
-      run: docker-compose push
-      if: ${{ github.ref == 'refs/heads/master' }}
 
     - name: Push PDF file
       uses: actions/upload-artifact@v2
