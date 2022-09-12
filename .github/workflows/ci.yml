@@ -42,7 +42,6 @@ jobs:
       with:
         name: trpl book japanese
         path: book.pdf
-      if: ${{ github.ref == 'refs/heads/master' }}
 
   release:
     name: Publish artifact to gh-pages
