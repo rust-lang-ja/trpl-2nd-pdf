@@ -5,6 +5,7 @@ set -ex
 # Clone Markdown source
 if [[ -d "./book-ja" ]]; then
   cd book-ja
+  git restore book.toml
   git checkout master-ja
   git pull origin master-ja
 else
@@ -24,6 +25,7 @@ cd ..
 
 # Download online images
 cp -r ./book-ja/src/img ./
+mv ./img/ferris/* ./img
 for f in ./img/*.svg
 do
   if [[ $f =~ \./img/(.*)\.svg ]]; then
@@ -43,9 +45,10 @@ if [[ ! -d "./target" ]]; then
 fi
 
 # Copy markdown files to the working directory
-for f in ./book-ja/src/*.md; do
+for f in ./book-ja/book/markdown/*.md; do
   cp "$f" target/
 done
+cp ./book-ja/src/SUMMARY.md target
 
 python3 python/fix_table.py < target/appendix-02-operators.md > target/tmp.md
 mv target/tmp.md target/appendix-02-operators.md
@@ -61,3 +64,6 @@ for f in target/*.md; do
 done
 
 python3 ./python/body.py < ./target/SUMMARY.md > body.tex
+
+python3 ./python/fix_incsvg.py < target/ch00-00-introduction.tex > target/tmp.tex
+mv target/tmp.tex target/ch00-00-introduction.tex
